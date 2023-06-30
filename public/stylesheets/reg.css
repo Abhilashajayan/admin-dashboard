@@ -1,0 +1,36 @@
+/* #mains{
+    background-color: rgb(233, 150, 150);
+    color: blueviolet;
+    width: 300px;
+    justify-content: center;
+    align-items: center;
+    display:block ;
+    padding: auto;
+    border-radius: 30px;
+} */
+.sign-head{
+    background-color:#fff;
+}
+#mains input ,button{
+    border-radius: 10px;
+    border-color: #fff;
+    height: 40px;
+    letter-spacing: 2px;
+    border: none;
+    
+}
+#mains label{
+    letter-spacing: 2px;
+    padding: 10px;
+    margin-left: 10px;
+    color: rgb(186, 186, 186);
+}
+#mains input{
+    padding: 10px;
+    background-color: #f6f7f5;
+}
+
+#mains a{
+    margin-left: 70%;
+    padding: 10px;
+}
