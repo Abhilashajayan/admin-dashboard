@@ -10,13 +10,14 @@
 </head>
 <body>
     <div id="log-head" class="col-12 col-lg-6 col-md-6 vh-100  d-flex justify-content-center w-100 align-items-center">
-        <form id="mains" class="p-5  form-group  position-absolute text-light justify-content-center  col-12 col-md-6 col-lg-4" action="/login" method="post">
+        <form id="mains" class="p-5  form-group  position-absolute text-light justify-content-center  col-12 col-md-6 col-lg-4" action="/login" method="POST">
             <div class="justify-content-center d-flex">
                 <img src="images/icons8-person-94.png" class="rounded-circle">
             </div>
             <div class="d-flex justify-content-center">
                 <h1 style="letter-spacing: 2px; color: #000;">Login</h1>
             </div>
+            
             <br>
             <div>
                 <label>email</label>
@@ -29,12 +30,16 @@
                 <br>
                 <input placeholder="password" type="password" name="logpassword" class="w-100" required>  
             </div>
-            
             <br>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="text-danger">
+                  <%=error%>
+                <p>
+                <% } %>
             <button type="submit" class="w-100 text-secondary">Submit</button>
             <br>
             <br>
-            <a href="/register" style="color:  rgb(186, 186, 186);;" >Sign up</a>
+            <a href="register" style="color:  rgb(186, 186, 186);;" >Sign up</a>
         </form>
     </div>
 </body>

@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const validate = require("../middleware/Validate");
+const User = require("../model/signupSchema");
 
-router.get("/",(req , res, next)=>{
-    res.render('home');
-    if (req.session.loggedIn) {
-        res.send('Welcome to the home page!');
-      } else {
-        res.redirect('/login');
-      }
+router.get("/",validate, async (req , res)=>{
+  let user = req.session.username;
+   res.render('home', {user});
+   
 });
 
 module.exports =router;

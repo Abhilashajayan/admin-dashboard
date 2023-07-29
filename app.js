@@ -4,20 +4,49 @@ var path = require('path');
 const session = require('express-session');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose')
+const flash = require('connect-flash');
 
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var regRouter = require("./routes/register");
 var loginRouter = require("./routes/login");
 var homeRouter = require("./routes/home");
+const adminRouter= require("./routes/adminLog");
+const adminDashRouter = require("./routes/adminDash");
 const validate = require('./middleware/Validate');
+const userIDRouter = require('./routes/edit');
+const sortRouter = require('./routes/sort');
+const searchRouter = require('./routes/search');
+require('dotenv').config();
 
+// the the data base connection is starting from here
+async function connectToMongoDB() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
+    console.log('Connected successfully to MongoDB');
+  } catch (err) {
+    console.error('Failed to connect to MongoDB:', err);
+  }
+}
 
+connectToMongoDB();
 var app = express();
+app.use(session({
+  secret: 'secret key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 1000000 }
+}));
 
-var users = []
+app.use(flash());
+
+
+
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -27,45 +56,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: 'secret key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 10000 }
-}));
 
 
 
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/register',regRouter);
-app.use('/login',loginRouter);
-app.get('/home',validate,(req, res)=>{
-  res.render('home',{ name :s});
-})
-
-
-
-
-// catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-//   next();
-// });
-var s;
-app.post('/register', (req, res) => {
-  const {name, password , email} = req.body;
-    s = req.body.name;
-    if(name === ""  || password === ""){
-      res.render('register');
-    }else{
-      users.push(name,password,email);
-      console.log(users);
-      res.render('login');
-    }
- 
+app.use((req, res, next) => {
+  res.locals.successMsg = req.flash('successMsg');
+  res.locals.addedUser = req.flash('addedUser');
+  res.locals.deletedUser = req.flash('deletedUser');
+  next();
 });
+app.use('/',regRouter);
+app.use('/login',loginRouter);
+app.use('/home',homeRouter);
+app.use('/',adminRouter);
+app.use('/dashboard',adminDashRouter);
+app.use('/',userIDRouter);
+app.use('/sort',sortRouter);
+app.use('/',searchRouter);
+
+
 
 app.get('/logout',(req , res)=>{
   req.session.destroy((err) => {
@@ -76,29 +86,15 @@ app.get('/logout',(req , res)=>{
 })
 })
 
-app.post('/login',(req , res)=>{
-  console.log("checking for the loggin");
-  const {logname, logpassword} =req.body;
-  // console.log(logpassword);
-  if(users.includes(logpassword) && users.includes(logname)){
-    req.session.loggedIn = true;
-    res.redirect('/home');
-   
-  }else{
-    res.redirect("/login");
-  }
-    
-});
+app.get('/logouts',(req , res)=>{
+  req.session.destroy((err) => {
+    if (err) {
+        console.log(err);
+    }
+    res.redirect('/admin');
+})
+})
 
-app.use(function(err, req, res, next) {
-
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-
-  res.status(err.status || 500);
-  res.render('error');
-});
 
 module.exports = app;
 

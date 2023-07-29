@@ -1,5 +1,6 @@
+
 function validate(req, res , next){
-    if(req.session.loggedIn)
+    if(req.session.loggedIn && req.session.userval )
     {
         next();
     }else{
